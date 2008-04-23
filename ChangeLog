@@ -1,0 +1,475 @@
+2005-06-20 16:34:51  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Version 1.0.1
+
+	* A    frontend/tags/1.0.1
+	* A    backend/tags/1.0.1
+
+2005-06-20 16:32:27  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Version 1.0.1
+
+	* M    includes/globals.php
+
+2005-06-20 16:29:26  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* BUG FIXES:
+	        Security fix for possible session failure
+
+	        M    includes/classes/session.inc.php
+
+	* CHANGES:
+	        www A record added by default
+
+	        M    includes/classes/dns.inc.php
+
+	* NEW FEATURES:
+	        Searching Added
+
+	        A    admin/search.php
+	        A    templates/admin/search_form.htm
+	        A    templates/admin/nav_search.htm
+	        M    templates/admin/nav.htm
+	        A    templates/admin/search_results.htm
+	        M    templates/admin/index.htm
+	        M    templates/addrecord.htm
+
+2005-03-05 11:30:18  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    releases/dnscontrol-1.0.0-beta1.tar.gz
+
+2005-03-05 11:28:02  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    INSTALL
+
+2005-03-05 11:01:58  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* woops
+	* A    releases/dnscontrol-1.0.0-beta1.tar.gz
+	* D    releases/dnscontrol-1.0.0-beta1.tar
+
+2005-03-05 11:01:39  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* AM   releases/dnscontrol-1.0.0-beta1.tar
+
+2005-03-05 11:00:44  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    INSTALL
+
+2005-03-05 10:59:34  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    frontend/tags/1.0.0-beta1/sql/dns.sql
+
+2005-03-05 10:59:12  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* generic sql
+	* M    frontend/trunk/sql/dns.sql
+
+2005-03-05 10:56:01  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* A    TODO
+	* M    INSTALL
+
+2005-03-05 10:53:20  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Generic Conf
+	* M    frontend/trunk/includes/config.inc.php.dist
+	* M    frontend/tags/1.0.0-beta1/includes/config.inc.php.dist
+	* M    ChangeLog
+
+2005-03-05 10:49:10  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    INSTALL
+
+2005-03-05 10:19:34  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* A    INSTALL
+
+2005-03-05 10:16:21  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* A    frontend/tags/1.0.0-beta1
+	* A    frontend/tags/1.0.0-beta1/includes/globals.php
+	* A    backend/tags/1.0.0-beta1
+
+2005-03-05 10:15:37  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* tar.gz
+	* A    releases
+
+2005-03-05 10:15:14  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* changed version
+	* M    frontend/trunk/includes/globals.php
+
+2005-03-05 10:13:54  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* D    backend/tags/1.0.0-RC1
+
+2005-03-05 10:13:48  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* D    frontend/tags/1.0.0-RC1
+
+2005-03-04 15:14:50  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* fixed bug with rndc reload
+	* M    includes/classes/dns.inc.php
+
+2005-03-04 11:54:24  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Out put status when processing a rebuild (rebuildZones()
+	* M    includes/classes/dns.inc.php
+
+2005-03-04 11:53:16  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* find and remove orphan domains
+	* A    removeorphans.php
+
+2005-03-04 00:01:10  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* bug fixes
+
+2005-03-03 16:35:14  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* 1.0.0-RC1
+
+2005-03-03 16:34:41  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* version tags
+	* M    templates/footer.htm
+
+2005-03-03 16:33:18  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* D    frontend/tags/1.0.0-RC1
+
+2005-03-03 16:32:52  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* RC1
+
+2005-03-03 16:31:32  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* 1.0.0-RC1
+	* A    frontend/tags/1.0.0-RC1
+	* A    backend/tags/1.0.0-RC1
+
+2005-03-03 16:26:41  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    ChangeLog
+
+2005-03-03 16:25:43  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* added changing of main IP
+	* A    changeip.php
+	* M    includes/classes/dns.inc.php
+	* A    templates/editip.htm
+	* M    templates/index.htm
+
+2005-03-03 16:02:02  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* updated db
+	* added change passwords on zones
+	* M    sql/dns.sql
+	* M    includes/classes/dns.inc.php
+	* M    admin/modzone.php
+	* M    admin/index.php
+	* A    templates/admin/editzone.htm
+	* M    templates/admin/index.htm
+
+2005-03-03 15:45:29  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* ask for password durring creatin
+	* M    admin/index.php
+	* M    templates/admin/addzone.htm
+	* M    templates/admin/index.htm
+
+2005-03-03 15:28:23  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* queue lock
+	* M    processqueue.php
+
+2005-03-03 15:27:58  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* queue locks
+	* M    includes/functions.inc.php
+	* M    includes/classes/dns.inc.php
+	* M    admin/index.php
+	* M    templates/admin/nav.htm
+	* M    templates/admin/index.htm
+
+2005-03-03 14:30:42  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* adding and removing domains
+	* A    admin/modzone.php
+	* M    admin/index.php
+	* M    templates/admin/addzone.htm
+	* M    templates/admin/index.htm
+
+2005-03-03 14:17:23  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* adding admin functions
+
+	* M    logout.php
+	* M    includes/globals.php
+	* M    includes/classes/session.inc.php
+	* M    includes/classes/dns.inc.php
+	* A    admin
+	* A    admin/logout.php
+	* A    admin/addzone.php
+	* A    admin/index.php
+	* A    admin/login.php
+	* M    addrecord.php
+	* A    templates/admin
+	* A    templates/admin/login.htm
+	* A    templates/admin/addzone.htm
+	* A    templates/admin/nav.htm
+	* A    templates/admin/index.htm
+
+2005-03-03 09:58:20  Justin Mazzi <jmazzi@gmail.com>
+
+
+2005-02-28 16:53:59  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* global app_name var
+	* M    includes/globals.php
+	* M    templates/login.htm
+
+2005-02-28 16:47:53  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* failed message with color
+	* M    addrecord.php
+
+2005-02-28 16:39:57  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* new window for raw zone
+	* M    templates/nav.htm
+
+2005-02-28 16:37:51  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* colors for good and bad messages
+	* M    modrecord.php
+	* M    index.php
+	* M    templates/index.htm
+
+2005-02-28 16:34:38  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* redirect to index on success
+	* M    addrecord.php
+
+2005-02-28 16:34:15  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* nav
+	* D    templates/header.htm
+	* A    templates/nav.htm
+
+2005-02-28 16:33:53  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* adding nav
+	* M    templates/addrecord_post.htm
+	* M    templates/footer.htm
+	* M    templates/editzone.htm
+	* M    templates/index.htm
+	* M    templates/addrecord.htm
+
+2005-02-28 16:22:37  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* fixed record edit issues
+	* M    modrecord.php
+	* M    includes/classes/dns.inc.php
+	* M    templates/editzone.htm
+
+2005-02-28 15:56:43  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    ChangeLog
+
+2005-02-28 15:56:24  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* D    frontend/trunk/ChangeLog
+	* A    ChangeLog
+
+2005-02-28 15:53:24  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* M    frontend/trunk/ChangeLog
+
+2005-02-28 15:51:55  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* default records added
+	* removed register link
+	* M    includes/classes/dns.inc.php
+	* M    templates/login.htm
+
+2005-02-28 11:23:17  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* D    test.php
+
+2005-02-28 11:23:03  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* A    test.php
+
+2005-02-28 11:06:05  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Id tags
+	* MM   includes/functions.inc.php
+	* MM   includes/globals.php
+	* MM   includes/cmd.php
+
+2005-02-28 11:04:31  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Id tags
+	* M    trunk/logout.php
+	* M    trunk/modrecord.php
+	* M    trunk/viewzone.php
+	* M    trunk/addrecord.php
+	* M    trunk/index.php
+	* M    trunk/login.php
+
+2005-02-28 11:03:00  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* Id tags
+	* _M   trunk/logout.php
+	* _M   trunk/modrecord.php
+	* _M   trunk/viewzone.php
+	* _M   trunk/addrecord.php
+	* _M   trunk/index.php
+	* _M   trunk/login.php
+
+2005-02-28 11:02:35  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* adding Id Tags
+	* M    trunk/logout.php
+	* M    trunk/modrecord.php
+	* M    trunk/viewzone.php
+	* M    trunk/addrecord.php
+	* M    trunk/index.php
+	* M    trunk/login.php
+
+2005-02-27 22:22:29  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* editing zones works now
+	* M    modrecord.php
+	* M    includes/classes/dns.inc.php
+	* M    index.php
+	* A    templates/editzone.htm
+	* M    templates/index.htm
+
+2005-02-27 22:21:56  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* run del last
+	* M    processqueue.php
+
+2005-02-27 21:28:19  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* adodb420->adodb421
+
+2005-02-27 21:22:45  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* del records added
+	* start of mod
+	* A    modrecord.php
+	* _M   includes
+	* M    includes/classes/dns.inc.php
+	* _M   compiled_templates
+
+2005-02-27 21:02:45  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* removed debug test link
+	* M    templates/index.htm
+
+2005-02-27 21:02:24  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* confirm delete
+	* M    includes/classes/dns.inc.php
+	* M    templates/index.htm
+
+2005-02-27 09:43:37  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* alternate colors
+	* M    templates/index.htm
+
+2005-02-27 09:26:08  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* offline mode for dns scipts
+	* M    processqueue.php
+
+2005-02-27 09:25:49  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* offline mode for dns scripts
+	* M    includes/config.inc.php.dist
+
+2005-02-27 09:22:17  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* A    viewzone.php
+
+2005-02-26 16:32:17  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* new options
+	* M    includes/config.inc.php.dist
+
+2005-02-26 16:27:48  Justin Mazzi <jmazzi@gmail.com>
+
+
+	* public import
+

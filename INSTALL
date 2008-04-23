@@ -1,0 +1,36 @@
+The frontend directory has the web interface in it.
+The backend directory has the command scripts. You want these in a directory not accessable from the web.
+
+Web setup:
+1) Create a mysql database
+2) Create a mysql user
+3) import the dump: mysql dns < frontend/sql/dump.sql
+4) Create Admin, Run this sql query
+        INSERT INTO `admins` ( `userid` , `username` , `password` ) VALUES ( '', 'ADMIN_USERNAME', MD5( 'YOUR_PASSWORD' ));
+
+5) edit frontend/includes/config.inc.php
+6) chmod 777 frontend/compiled_templates
+Admin Login URL /admin/
+
+
+Backend Setup:
+1) Place scrips in a directory outside the web interface.
+2) edit backend/includes/globals.php
+3) change this line to the correct path
+4) require("/var/www/html/includes/config.inc.php");
+5) chmod 755 *.php
+6) ensure path to php is correct in all command scripts
+7) Setup processqueue.php to run  on a cron as often as 1 minute.
+    */5 * * * * /path/to/processqueue.php
+
+Script definitions:
+addzone.php - Command line Add Zone script
+processqueue.php - This is the script that processes all changes made to zones
+rebuildzones.php - Rebuilds all zone files, maintenance script
+rewriteconf.php - Rebuilds named.conf
+removeorphans.php - Removes orphans domains from your named dir. If it doesnt exist in the DB, it will remove the zone file
+
+
+Notes:
+
+Process queue link in web interface does not work yet.

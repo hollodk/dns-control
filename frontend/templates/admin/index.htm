@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><{$app_name}></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="<{$base_url}>/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<SCRIPT LANGUAGE="JavaScript">
+<!-- Start confirm del 
+
+function delrecord(recordname) {
+        return confirm("Are you sure you want to delete " + recordname + "?" );
+}
+
+// Stop confirm del --->
+</SCRIPT>
+<table width="80%" border="0" cellpadding="2" cellspacing="1" onmouseover="this.style.backgroundColor = '#BCCBD2';" onmouseout="this.style.backgroundColor = '#CDDBE2';" class="mainBG" align="center">
+  <tr> 
+    <td align="center" valign="middle" class="headBG1"><span class="textSize0"><{include file="admin/nav.htm"}><br></span>
+</td>
+  </tr>
+  <tr> 
+    <td onmouseover="this.style.backgroundColor = '#FBFDFF';"
+onmouseout="this.style.backgroundColor = '#FFFFFF';"
+class="contentBGNewsMainTD"> <br>
+        <{include file="admin/nav_search.htm"}>
+      <table width="50%" border="0" cellspacing="1" cellpadding="2" bgcolor="#dcdcdc" align="center" >
+        <tr> <{if $smarty.request.msg}><center><font color="<{$color}>"><b><{$msg}></b></font></center><br><{/if}>
+          <td bgcolor="whitesmoke" colspan="2"><p><b><center>
+            Viewing Domains: <{$totaldomains}>
+          </center></b></p></td>
+        </tr>
+        <tr> 
+          <td bgcolor="#ffffff" colspan="2"><center>
+            <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+            <tr><td><br></td></tr>
+            <{section name=info loop=$domains}>
+              <tr bgcolor="<{cycle name=info values="whitesmoke,#ffffff"}>">
+                <td><{$domains[info].domain}></td>
+                <td><{$domains[info].password}></td>
+                <td><a href="modzone.php?act=edit&domainid=<{$domains[info].domainid}>">Edit</a></td>
+                <td><a href="modzone.php?act=del&domainid=<{$domains[info].domainid}>" onClick="return delrecord('<{$domains[info].domain}>')">Delete</a></td>
+              </tr>
+            <{/section}>
+            <tr><td><br></td></tr>
+            </table>
+          </center></td>
+      </table>
+        <br>
+
+  <center><{$paging}></center>
+      <br>
+    </td>
+  </tr>
+  </tr>
+      <{include file="footer.htm"}>
+  </tr>
+</table>
+</body>
+</html>

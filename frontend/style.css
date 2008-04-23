@@ -1,0 +1,264 @@
+A, A:ACTIVE, A:FOCUS, A:LINK, A:VISITED {
+	color: #2D617D;
+	text-decoration: underline;
+}
+
+A:HOVER {
+	color: #245066;
+	text-decoration: none;
+}
+
+BODY {
+	background-color: #FFFFFF;
+	scrollbar-3dlight-color: #FFFFFF;
+	scrollbar-arrow-color: #2D617D;
+	scrollbar-darkshadow-color: #FFFFFF;
+	scrollbar-face-color: #E8F4FD;
+	scrollbar-highlight-color: #CCE9EC;
+	scrollbar-shadow-color: #8CCCCD;
+	scrollbar-track-color: #FFFFFF;
+}
+
+BODY, TD, FIELDSET, MARQUEE {
+	cursor: default;
+}
+
+BODY, TD, INPUT, TEXTAREA, SELECT {
+	color: #2D617D;
+	font: 10px Verdana, Tahoma, sans-serif;
+	font-weight: none;
+	text-decoration: none;
+}
+
+FIELDSET {
+	border:1px solid #C6D6DF; padding:3px; 
+}
+
+FIELDSET.fieldsetSTF {
+	margin-bottom: 3px;
+}
+
+INPUT {
+	background-color: #F2F9FD;
+	border-color: #CDDBE2 #CDDBE2 #CDDBE2 #CDDBE2;
+	border-style: solid;
+	border-width: 1px;
+	font-size: 9px;
+}
+
+/* The buttons used for bbCode styling in message post */
+INPUT.button {
+	background-color: #EFEFEF;
+	color: #2D617D;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8px;
+}
+
+/* None-bold submit button */
+INPUT.liteoption {
+	background-color: #DEF1FC;
+	border-color: #CDDBE2 #CDDBE2 #CDDBE2 #CDDBE2;
+	font-weight: normal;
+}
+
+/* The main submit button option */
+INPUT.mainoption {
+	background-color: #DEF1FC;
+	border-color: #CDDBE2 #CDDBE2 #CDDBE2 #CDDBE2;
+	border-style: solid;
+	border-width: 1px;
+	cursor: hand;
+}
+
+INPUT.newsletterSubmitButton {
+	background-color: #DEF1FC;
+	border-color: #CDDBE2 #CDDBE2 #CDDBE2 #CDDBE2;
+	border-style: solid;
+	border-width: 1px;
+	cursor: hand;
+	font-size: 9px;
+}
+
+INPUT.post {
+	background-color: #F2F9FD;
+	border-color: #CDDBE2 #CDDBE2 #CDDBE2 #CDDBE2;
+	border-style: solid;
+	border-width: 1px;
+	font-size: 9px;
+}
+
+INPUT.radio {
+	background-color: #FFFFFF;
+	border-color: #FFFFFF #FFFFFF #FFFFFF #FFFFFF;
+	border-style: solid;
+	border-width: 0px;
+	font-size: 9px;
+}
+
+TEXTAREA, SELECT {
+	border:1px solid #CDDBE2; background-color: #F2F9FD;
+	font-size: 10px;
+	scrollbar-3dlight-color: #F2F9FD;
+	scrollbar-arrow-color: #2D617D;
+	scrollbar-darkshadow-color: #F2F9FD;
+	scrollbar-face-color: #E8F4FD;
+	scrollbar-highlight-color: #CCE9EC;
+	scrollbar-shadow-color: #8CCCCD;
+	scrollbar-track-color: #F2F9FD
+}
+
+/* The text input fields background colour */
+INPUT.post, TEXTAREA.post, SELECT {
+	border:1px solid #A5B8C0; background-color: #F2F9FD;
+	scrollbar-3dlight-color: #F2F9FD;
+	scrollbar-arrow-color: #2D617D;
+	scrollbar-darkshadow-color: #F2F9FD;
+	scrollbar-face-color: #E8F4FD;
+	scrollbar-highlight-color: #CCE9EC;
+	scrollbar-shadow-color: #8CCCCD;
+	scrollbar-track-color: #F2F9FD
+}
+
+.contentBG {
+	background-color: #FFFFFF;
+	padding: 4px 4px 4px 4px;
+}
+
+.contentBGNewsMainTD {
+	background-color: #FFFFFF;
+	padding: 3px 3px 0px 3px;
+}
+
+.contentBGSTFTD {
+	background-color: #FFFFFF;
+	padding: 3px 3px 3px 3px;
+}
+
+.contentNewsletterBG {
+	background-color: #FFFFFF;
+	padding: 4px 4px 5px 4px;
+}
+
+.contentTDBG {
+	background-color: #D6E1E8;
+	margin-bottom: 3px;
+}
+
+.contentTDBG2 {
+	background-color: #CDDBE2;
+	margin-bottom: 3px;
+}
+
+.copyright {
+	font-size: 9px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.headBG1 {
+	background-color: #EDF7FC;
+	padding: 2px 2px 2px 2px;
+}
+
+.headerBG {
+	background-color: #FFFFFF;
+}
+
+.headerTopBottom {
+	background-color: #EDF7FC;
+	height: 5px;
+}
+
+.headMenuBG1 {
+	background-color: #EDF7FC;
+	padding: 1px 1px 1px 1px;
+}
+
+.headSub1 {
+	background-color: #F6FBFF;
+	font-size: 9px;
+	padding: 1px 1px 1px 1px;
+	text-align: center;
+}
+
+.headSub2 {
+	background-color: #F6FBFF;
+	border: 1px solid #D6E1E8;
+	font-size: 9px;
+	padding: 1px 1px 1px 1px;
+	text-align: center;
+}
+
+.headSub2TableMargin {
+	margin-bottom: 3px;
+}
+
+.mainBG {
+	background-color: #CDDBE2;
+}
+
+.mainContentBox {
+	padding-left: 6px;
+}
+
+.meniNavBGandPadding {
+	background-color: #FFFFFF;
+	padding: 1px 4px 4px 4px;
+}
+
+.spacerTable1 {
+	height: 7px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.spacerTable2 {
+	height: 4px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.spacerTable3 {
+	height: 10px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.spacerTable4 {
+	height: 7px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.textBold {
+	font-weight: bold;
+}
+
+.textSize0 {
+	font-size: 9px;
+}
+
+.textSize1 {
+	font-size: 10px;
+}
+
+.textSize2 {
+	font-size: 11px;
+}
+
+.textSize3 {
+	font-size: 12px;
+}
+
+.title {
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.titleNav {
+	font-size: 10px;
+	text-align: center;
+	vertical-align: middle;
+}
