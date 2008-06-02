@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.61 24 Feb 2005 (c) 2000-2005 John Lim. All rights reserved.
+  version V4.98 13 Feb 2008 (c) 2000-2008 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -63,7 +63,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $_stmt;
 	var $_commit = OCI_COMMIT_ON_SUCCESS;
 	var $_initdate = true; // init date to YYYY-MM-DD
-	var $metaTablesSQL = "select table_name,table_type from cat where table_type in ('TABLE','VIEW')";
+	var $metaTablesSQL = "select table_name,table_type from cat where table_type in ('TABLE','VIEW') and table_name not like 'BIN\$%'"; // bin$ tables are recycle bin tables
 	var $metaColumnsSQL = "select cname,coltype,width, SCALE, PRECISION, NULLS, DEFAULTVAL from col where tname='%s' order by colno"; //changed by smondino@users.sourceforge. net
 	var $_bindInputArray = true;
 	var $hasGenID = true;
@@ -75,6 +75,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $noNullStrings = false;
 	var $connectSID = false;
 	var $_bind = false;
+	var $_nestedSQL = true;
 	var $_hasOCIFetchStatement = false;
 	var $_getarray = false; // currently not working
 	var $leftOuter = '';  // oracle wierdness, $col = $value (+) for LEFT OUTER, $col (+)= $value for RIGHT OUTER
@@ -82,6 +83,7 @@ class ADODB_oci8 extends ADOConnection {
 	var $firstrows = true; // enable first rows optimization on SelectLimit()
 	var $selectOffsetAlg1 = 100; // when to use 1st algorithm of selectlimit.
 	var $NLS_DATE_FORMAT = 'YYYY-MM-DD';  // To include time, use 'RRRR-MM-DD HH24:MI:SS'
+	var $dateformat = 'YYYY-MM-DD'; // for DBDate()
  	var $useDBDateFormatForTextInput=false;
 	var $datetime = false; // MetaType('DATE') returns 'D' (datetime==false) or 'T' (datetime == true)
 	var $_refLOBs = array();
@@ -118,8 +120,8 @@ class ADODB_oci8 extends ADOConnection {
 	   		$fld->type = $rs->fields[1];
 	   		$fld->max_length = $rs->fields[2];
 			$fld->scale = $rs->fields[3];
-			if ($rs->fields[1] == 'NUMBER' && $rs->fields[3] == 0) {
-				$fld->type ='INT';
+			if ($rs->fields[1] == 'NUMBER') {
+				if ($rs->fields[3] == 0) $fld->type = 'INT';
 	     		$fld->max_length = $rs->fields[4];
 	    	}	
 		   	$fld->not_null = (strncmp($rs->fields[5], 'NOT',3) === 0);
@@ -131,7 +133,10 @@ class ADODB_oci8 extends ADOConnection {
 			$rs->MoveNext();
 		}
 		$rs->Close();
-		return (empty($retarr)) ? $false : $retarr;
+		if (empty($retarr))
+			return  $false;
+		else 
+			return $retarr;
 	}
 	
 	function Time()
@@ -192,7 +197,7 @@ NATSOFT.DOMAIN =
 				   	$argHostname=$argHostinfo[0];
 					$argHostport=$argHostinfo[1];
 			 	} else {
-					$argHostport="1521";
+					$argHostport = empty($this->port)?  "1521" : $this->port;
 	   			}
 				
 				if ($this->connectSID) {
@@ -207,24 +212,24 @@ NATSOFT.DOMAIN =
  		//if ($argHostname) print "<p>Connect: 1st argument should be left blank for $this->databaseType</p>";
 		if ($mode==1) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCIPLogon($argUsername,$argPassword, $argDatabasename)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCIPLogon($argUsername,$argPassword, $argDatabasename, $this->charSet)
+				OCIPLogon($argUsername,$argPassword, $argDatabasename)
 				;
 			if ($this->_connectionID && $this->autoRollback)  OCIrollback($this->_connectionID);
 		} else if ($mode==2) {
 			$this->_connectionID = ($this->charSet) ? 
-				OCINLogon($argUsername,$argPassword, $argDatabasename)
+				OCINLogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCINLogon($argUsername,$argPassword, $argDatabasename, $this->charSet);
+				OCINLogon($argUsername,$argPassword, $argDatabasename);
 				
 		} else {
 			$this->_connectionID = ($this->charSet) ? 
-				OCILogon($argUsername,$argPassword, $argDatabasename)
+				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet)
 				:
-				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet);
+				OCILogon($argUsername,$argPassword, $argDatabasename);
 		}
-		if ($this->_connectionID === false) return false;
+		if (!$this->_connectionID) return false;
 		if ($this->_initdate) {
 			$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='".$this->NLS_DATE_FORMAT."'");
 		}
@@ -272,22 +277,37 @@ NATSOFT.DOMAIN =
 		if (empty($d) && $d !== 0) return 'null';
 		
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
-		return "TO_DATE(".adodb_date($this->fmtDate,$d).",'".$this->NLS_DATE_FORMAT."')";
+		return "TO_DATE(".adodb_date($this->fmtDate,$d).",'".$this->dateformat."')";
 	}
 
+	function BindDate($d)
+	{
+		$d = ADOConnection::DBDate($d);
+		if (strncmp($d,"'",1)) return $d;
+		
+		return substr($d,1,strlen($d)-2);
+	}
+	
+	function BindTimeStamp($d)
+	{
+		$d = ADOConnection::DBTimeStamp($d);
+		if (strncmp($d,"'",1)) return $d;
+		
+		return substr($d,1,strlen($d)-2);
+	}
 	
 	// format and return date string in database timestamp format
 	function DBTimeStamp($ts)
 	{
 		if (empty($ts) && $ts !== 0) return 'null';
 		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
-		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
+		return 'TO_DATE('.adodb_date("'Y-m-d H:i:s'",$ts).",'RRRR-MM-DD, HH24:MI:SS')";
 	}
 	
-	function RowLock($tables,$where) 
+	function RowLock($tables,$where,$flds='1 as ignore') 
 	{
 		if ($this->autoCommit) $this->BeginTrans();
-		return $this->GetOne("select 1 as ignore from $tables where $where for update");
+		return $this->GetOne("select $flds from $tables where $where for update");
 	}
 	
 	function &MetaTables($ttype=false,$showSchema=false,$mask=false) 
@@ -295,7 +315,7 @@ NATSOFT.DOMAIN =
 		if ($mask) {
 			$save = $this->metaTablesSQL;
 			$mask = $this->qstr(strtoupper($mask));
-			$this->metaTablesSQL .= " AND table_name like $mask";
+			$this->metaTablesSQL .= " AND upper(table_name) like $mask";
 		}
 		$ret =& ADOConnection::MetaTables($ttype,$showSchema);
 		
@@ -378,6 +398,8 @@ NATSOFT.DOMAIN =
 		$this->transCnt += 1;
 		$this->autoCommit = false;
 		$this->_commit = OCI_DEFAULT;
+		
+		if ($this->_transmode) $this->Execute("SET TRANSACTION ".$this->_transmode);
 		return true;
 	}
 	
@@ -413,10 +435,10 @@ NATSOFT.DOMAIN =
 	{
 		if ($this->_errorMsg !== false) return $this->_errorMsg;
 
-		if (is_resource($this->_stmt)) $arr = @OCIerror($this->_stmt);
+		if (is_resource($this->_stmt)) $arr = @OCIError($this->_stmt);
 		if (empty($arr)) {
-			$arr = @OCIerror($this->_connectionID);
-			if ($arr === false) $arr = @OCIError();
+			if (is_resource($this->_connectionID)) $arr = @OCIError($this->_connectionID);
+			else $arr = @OCIError();
 			if ($arr === false) return '';
 		}
 		$this->_errorMsg = $arr['message'];
@@ -493,6 +515,18 @@ NATSOFT.DOMAIN =
 				$s .= 'AM';
 				break;
 				
+			case 'w':
+				$s .= 'D';
+				break;
+				
+			case 'l':
+				$s .= 'DAY';
+				break;
+				
+			 case 'W':
+				$s .= 'WW';
+				break;
+				
 			default:
 			// handle escape characters...
 				if ($ch == '\\') {
@@ -507,6 +541,12 @@ NATSOFT.DOMAIN =
 		return $s. "')";
 	}
 	
+	function GetRandRow($sql, $arr = false)
+	{
+		$sql = "SELECT * FROM ($sql ORDER BY dbms_random.value) WHERE rownum = 1";
+		
+		return $this->GetRow($sql,$arr);
+	}
 	
 	/*
 	This algorithm makes use of
@@ -533,7 +573,7 @@ NATSOFT.DOMAIN =
 				$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
 		}
 		
-		if ($offset < $this->selectOffsetAlg1) {
+		if ($offset < $this->selectOffsetAlg1 && 0 < $nrows  && $nrows < 1000) {
 			if ($nrows > 0) {	
 				if ($offset > 0) $nrows += $offset;
 				//$inputarr['adodb_rownum'] = $nrows;
@@ -659,7 +699,7 @@ NATSOFT.DOMAIN =
 		if ($this->session_sharing_force_blob) $this->Execute('ALTER SESSION SET CURSOR_SHARING=EXACT');
 		$commit = $this->autoCommit;
 		if ($commit) $this->BeginTrans();
-		$rs = $this->Execute($sql,$arr);
+		$rs = $this->_Execute($sql,$arr);
 		if ($rez = !empty($rs)) $desc->save($val);
 		$desc->free();
 		if ($commit) $this->CommitTrans();
@@ -698,6 +738,45 @@ NATSOFT.DOMAIN =
 		return $rez;
 	}
 
+		/**
+	 * Execute SQL 
+	 *
+	 * @param sql		SQL statement to execute, or possibly an array holding prepared statement ($sql[0] will hold sql text)
+	 * @param [inputarr]	holds the input data to bind to. Null elements will be set to null.
+	 * @return 		RecordSet or false
+	 */
+	function &Execute($sql,$inputarr=false) 
+	{
+		if ($this->fnExecute) {
+			$fn = $this->fnExecute;
+			$ret =& $fn($this,$sql,$inputarr);
+			if (isset($ret)) return $ret;
+		}
+		if ($inputarr) {
+			#if (!is_array($inputarr)) $inputarr = array($inputarr);
+			$element0 = reset($inputarr);
+			
+			# is_object check because oci8 descriptors can be passed in
+			if (is_array($element0) && !is_object(reset($element0))) {
+				if (is_string($sql))
+					$stmt = $this->Prepare($sql);
+				else
+					$stmt = $sql;
+					
+				foreach($inputarr as $arr) {
+					$ret =& $this->_Execute($stmt,$arr);
+					if (!$ret) return $ret;
+				}
+			} else {
+				$ret =& $this->_Execute($sql,$inputarr);
+			}
+			
+		} else {
+			$ret =& $this->_Execute($sql,false);
+		}
+
+		return $ret;
+	}
 	
 	/*
 		Example of usage:
@@ -710,8 +789,17 @@ NATSOFT.DOMAIN =
 	
 		$stmt = OCIParse($this->_connectionID,$sql);
 
-		if (!$stmt) return false;
-
+		if (!$stmt) {
+			$this->_errorMsg = false;
+			$this->_errorCode = false;
+			$arr = @OCIError($this->_connectionID);
+			if ($arr === false) return false;
+		
+			$this->_errorMsg = $arr['message'];
+			$this->_errorCode = $arr['code'];
+			return false;
+		}
+		
 		$BINDNUM += 1;
 		
 		$sttype = @OCIStatementType($stmt);
@@ -742,6 +830,7 @@ NATSOFT.DOMAIN =
 	
 		if (is_array($stmt) && sizeof($stmt) >= 5) {
 			$hasref = true;
+			$ignoreCur = false;
 			$this->Parameter($stmt, $ignoreCur, $cursorName, false, -1, OCI_B_CURSOR);
 			if ($params) {
 				foreach($params as $k => $v) {
@@ -752,8 +841,10 @@ NATSOFT.DOMAIN =
 			$hasref = false;
 			
 		$rs =& $this->Execute($stmt);
-		if ($rs->databaseType == 'array') OCIFreeCursor($stmt[4]);
-		else if ($hasref) $rs->_refcursor = $stmt[4];
+		if ($rs) {
+			if ($rs->databaseType == 'array') OCIFreeCursor($stmt[4]);
+			else if ($hasref) $rs->_refcursor = $stmt[4];
+		}
 		return $rs;
 	}
 	
@@ -886,7 +977,6 @@ NATSOFT.DOMAIN =
 	*/ 
 	function _query($sql,$inputarr)
 	{
-		
 		if (is_array($sql)) { // is prepared sql
 			$stmt = $sql[1];
 			
@@ -1106,7 +1196,7 @@ SELECT /*+ RULE */ distinct b.column_name
 	 */
 	function qstr($s,$magic_quotes=false)
 	{	
-	$nofixquotes=false;
+		//$nofixquotes=false;
 	
 		if ($this->noNullStrings && strlen($s)==0)$s = ' ';
 		if (!$magic_quotes) {	
@@ -1205,19 +1295,26 @@ class ADORecordset_oci8 extends ADORecordSet {
 			  fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 			  fetchField() is retrieved.		*/
 
-	function &_FetchField($fieldOffset = -1)
+	function _FetchField($fieldOffset = -1)
 	{
 		$fld = new ADOFieldObject;
 		$fieldOffset += 1;
 		$fld->name =OCIcolumnname($this->_queryID, $fieldOffset);
 		$fld->type = OCIcolumntype($this->_queryID, $fieldOffset);
 		$fld->max_length = OCIcolumnsize($this->_queryID, $fieldOffset);
-	 	if ($fld->type == 'NUMBER') {
+	 	switch($fld->type) {
+		case 'NUMBER':
 	 		$p = OCIColumnPrecision($this->_queryID, $fieldOffset);
 			$sc = OCIColumnScale($this->_queryID, $fieldOffset);
 			if ($p != 0 && $sc == 0) $fld->type = 'INT';
-			//echo " $this->name ($p.$sc) ";
-	 	}
+			break;
+		
+	 	case 'CLOB':
+		case 'NCLOB':
+		case 'BLOB': 
+			$fld->max_length = -1;
+			break;
+		}
 		return $fld;
 	}
 	
@@ -1258,6 +1355,39 @@ class ADORecordset_oci8 extends ADORecordSet {
 		return false;
 	}
 	
+	/*
+	# does not work as first record is retrieved in _initrs(), so is not included in GetArray()
+	function &GetArray($nRows = -1) 
+	{
+	global $ADODB_OCI8_GETARRAY;
+	
+		if (true ||  !empty($ADODB_OCI8_GETARRAY)) {
+			# does not support $ADODB_ANSI_PADDING_OFF
+	
+			//OCI_RETURN_NULLS and OCI_RETURN_LOBS is set by OCIfetchstatement
+			switch($this->adodbFetchMode) {
+			case ADODB_FETCH_NUM:
+			
+				$ncols = @OCIfetchstatement($this->_queryID, $results, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW+OCI_NUM);
+				$results = array_merge(array($this->fields),$results);
+				return $results;
+				
+			case ADODB_FETCH_ASSOC: 
+				if (ADODB_ASSOC_CASE != 2 || $this->databaseType != 'oci8') break;
+				
+				$ncols = @OCIfetchstatement($this->_queryID, $assoc, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW);
+				$results =& array_merge(array($this->fields),$assoc);
+				return $results;
+			
+			default:
+				break;
+			}
+		}
+			
+		$results =& ADORecordSet::GetArray($nRows);
+		return $results;
+		
+	} */
 	
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 
@@ -1266,10 +1396,11 @@ class ADORecordset_oci8 extends ADORecordSet {
 			$arr =& $this->GetArray($nrows);
 			return $arr;
 		}
+		$arr = array();
 		for ($i=1; $i < $offset; $i++) 
-			if (!@OCIFetch($this->_queryID)) return array();
+			if (!@OCIFetch($this->_queryID)) return $arr;
 			
-		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return array();
+		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return $arr;;
 		$results = array();
 		$cnt = 0;
 		while (!$this->EOF && $nrows != $cnt) {

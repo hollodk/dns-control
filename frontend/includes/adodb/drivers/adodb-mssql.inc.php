@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -33,6 +33,11 @@ if (!defined('ADODB_DIR')) die();
 //	 http://support.microsoft.com/default.aspx?scid=kb;EN-US;q220918
 // Alternatively use:
 // 	   CONVERT(char(12),datecol,120)
+//
+// Also if your month is showing as month-1, 
+//   e.g. Jan 13, 2002 is showing as 13/0/2002, then see
+//     http://phplens.com/lens/lensforum/msgs.php?id=7048&x=1
+//   it's a localisation problem.
 //----------------------------------------------------------------
 
 
@@ -75,7 +80,7 @@ class ADODB_mssql extends ADOConnection {
 	var $dataProvider = "mssql";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $fmtDate = "'Y-m-d'";
-	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
+	var $fmtTimeStamp = "'Y-m-d H:i:s'";
 	var $hasInsertID = true;
 	var $substr = "substring";
 	var $length = 'len';
@@ -99,10 +104,9 @@ class ADODB_mssql extends ADOConnection {
 	var $rightOuter = '=*';
 	var $ansiOuter = true; // for mssql7 or later
 	var $poorAffectedRows = true;
-	var $identitySQL = 'select @@IDENTITY'; // 'select SCOPE_IDENTITY'; # for mssql 2000
+	var $identitySQL = 'select SCOPE_IDENTITY()'; // 'select SCOPE_IDENTITY'; # for mssql 2000
 	var $uniqueOrderBy = true;
 	var $_bindInputArray = true;
-	
 	
 	function ADODB_mssql() 
 	{		
@@ -113,19 +117,22 @@ class ADODB_mssql extends ADOConnection {
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$stmt = $this->PrepareSP('sp_server_info');
-		$val = 2;
+	
 		if ($this->fetchMode === false) {
 			$savem = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		} else 
 			$savem = $this->SetFetchMode(ADODB_FETCH_NUM);
+				
+		if (0) {
+			$stmt = $this->PrepareSP('sp_server_info');
+			$val = 2;
+			$this->Parameter($stmt,$val,'attribute_id');
+			$row = $this->GetRow($stmt);
+		}
 		
+		$row = $this->GetRow("execute sp_server_info 2");
 		
-		$this->Parameter($stmt,$val,'attribute_id');
-		$row = $this->GetRow($stmt);
-		
-		//$row = $this->GetRow("execute sp_server_info 2");
 		
 		if ($this->fetchMode === false) {
 			$ADODB_FETCH_MODE = $savem;
@@ -161,6 +168,8 @@ class ADODB_mssql extends ADOConnection {
 	
 	function CreateSequence($seq='adodbseq',$start=1)
 	{
+		
+		$this->Execute('BEGIN TRANSACTION adodbseq');
 		$start -= 1;
 		$this->Execute("create table $seq (id float(53))");
 		$ok = $this->Execute("insert into $seq with (tablock,holdlock) values($start)");
@@ -294,6 +303,17 @@ class ADODB_mssql extends ADOConnection {
 		return true;
 	}
 	
+	function SetTransactionMode( $transaction_mode ) 
+	{
+		$this->_transmode  = $transaction_mode;
+		if (empty($transaction_mode)) {
+			$this->Execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+			return;
+		}
+		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
+		$this->Execute("SET TRANSACTION ".$transaction_mode);
+	}
+	
 	/*
 		Usage:
 		
@@ -306,10 +326,10 @@ class ADODB_mssql extends ADOConnection {
 		
 		See http://www.swynk.com/friends/achigrik/SQL70Locks.asp
 	*/
-	function RowLock($tables,$where) 
+	function RowLock($tables,$where,$flds='top 1 null as ignore') 
 	{
 		if (!$this->transCnt) $this->BeginTrans();
-		return $this->GetOne("select top 1 null as ignore from $tables with (ROWLOCK,HOLDLOCK) where $where");
+		return $this->GetOne("select $flds from $tables with (ROWLOCK,HOLDLOCK) where $where");
 	}
 	
 	
@@ -397,17 +417,17 @@ order by constraint_name, referenced_table_name, keyno";
 	{ 
 		if(@mssql_select_db("master")) { 
 				 $qry=$this->metaDatabasesSQL; 
-				 if($rs=@mssql_query($qry)){ 
+				 if($rs=@mssql_query($qry,$this->_connectionID)){ 
 						 $tmpAr=$ar=array(); 
 						 while($tmpAr=@mssql_fetch_row($rs)) 
 								 $ar[]=$tmpAr[0]; 
-						@mssql_select_db($this->databaseName); 
+						@mssql_select_db($this->database); 
 						 if(sizeof($ar)) 
 								 return($ar); 
 						 else 
 								 return(false); 
 				 } else { 
-						 @mssql_select_db($this->databaseName); 
+						 @mssql_select_db($this->database); 
 						 return(false); 
 				 } 
 		 } 
@@ -436,7 +456,8 @@ order by constraint_name, referenced_table_name, keyno";
 		$ADODB_FETCH_MODE = $savem;
 		
 		if ($a && sizeof($a)>0) return $a;
-		return false;	  
+		$false = false;
+		return $false;	  
 	}
 
 	
@@ -457,7 +478,8 @@ order by constraint_name, referenced_table_name, keyno";
  
 	function SelectDB($dbName) 
 	{
-		$this->databaseName = $dbName;
+		$this->database = $dbName;
+		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		if ($this->_connectionID) {
 			return @mssql_select_db($dbName);		
 		}
@@ -581,7 +603,7 @@ order by constraint_name, referenced_table_name, keyno";
 	{
 		if (!$this->_has_mssql_init) {
 			ADOConnection::outp( "Parameter: mssql_bind only available since PHP 4.1.0");
-			return $sql;
+			return false;
 		}
 
 		$isNull = is_null($var); // php 4.0.4 and above...
@@ -589,7 +611,7 @@ order by constraint_name, referenced_table_name, keyno";
 		if ($type === false) 
 			switch(gettype($var)) {
 			default:
-			case 'string': $type = SQLCHAR; break;
+			case 'string': $type = SQLVARCHAR; break;
 			case 'double': $type = SQLFLT8; break;
 			case 'integer': $type = SQLINT4; break;
 			case 'boolean': $type = SQLINT1; break; # SQLBIT not supported in 4.1.0
@@ -683,7 +705,7 @@ order by constraint_name, referenced_table_name, keyno";
 			}
 			$decl = $this->qstr($decl);
 			if ($this->debug) ADOConnection::outp("<font size=-1>sp_executesql N{$sql[1]},N$decl,$params</font>");
-			$rez = mssql_query("sp_executesql N{$sql[1]},N$decl,$params");
+			$rez = mssql_query("sp_executesql N{$sql[1]},N$decl,$params", $this->_connectionID);
 			
 		} else if (is_array($sql)) {
 			# PrepareSP()
@@ -735,6 +757,7 @@ class ADORecordset_mssql extends ADORecordSet {
 		if ($mode === false) { 
 			global $ADODB_FETCH_MODE;
 			$mode = $ADODB_FETCH_MODE;
+
 		}
 		$this->fetchMode = $mode;
 		return $this->ADORecordSet($id,$mode);
@@ -781,15 +804,17 @@ class ADORecordset_mssql extends ADORecordSet {
 		fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 		fetchField() is retrieved.	*/
 
-	function FetchField($fieldOffset = -1) 
+	function &FetchField($fieldOffset = -1) 
 	{
 		if ($fieldOffset != -1) {
-			return @mssql_fetch_field($this->_queryID, $fieldOffset);
+			$f = @mssql_fetch_field($this->_queryID, $fieldOffset);
 		}
 		else if ($fieldOffset == -1) {	/*	The $fieldOffset argument is not provided thus its -1 	*/
-			return @mssql_fetch_field($this->_queryID);
+			$f = @mssql_fetch_field($this->_queryID);
 		}
-		return null;
+		$false = false;
+		if (empty($f)) return $false;
+		return $f;
 	}
 	
 	function _seek($row) 

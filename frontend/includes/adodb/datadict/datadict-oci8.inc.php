@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.98 13 Feb 2008  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -21,6 +21,8 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	var $dropTable = "DROP TABLE %s CASCADE CONSTRAINTS";
 	var $trigPrefix = 'TRIG_';
 	var $alterCol = ' MODIFY ';
+	var $typeX = 'VARCHAR(4000)';
+	var $typeXL = 'CLOB';
 	
 	function MetaType($t,$len=-1)
 	{
@@ -70,11 +72,11 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	{
 		switch($meta) {
 		case 'C': return 'VARCHAR';
-		case 'X': return 'VARCHAR(4000)';
-		case 'XL': return 'CLOB';
+		case 'X': return $this->typeX;
+		case 'XL': return $this->typeXL;
 		
-		case 'C2': return 'NVARCHAR';
-		case 'X2': return 'NVARCHAR(2000)';
+		case 'C2': return 'NVARCHAR2';
+		case 'X2': return 'NVARCHAR2(4000)';
 		
 		case 'B': return 'BLOB';
 			
@@ -194,6 +196,14 @@ end;
 			$seqname = $this->seqPrefix.$tabname;
 			$trigname = $this->trigPrefix.$seqname;
 		}
+		
+		if (strlen($seqname) > 30) {
+			$seqname = $this->seqPrefix.uniqid('');
+		} // end if
+		if (strlen($trigname) > 30) {
+			$trigname = $this->trigPrefix.uniqid('');
+		} // end if
+
 		if (isset($tableoptions['REPLACE'])) $sql[] = "DROP SEQUENCE $seqname";
 		$seqCache = '';
 		if (isset($tableoptions['SEQUENCE_CACHE'])){$seqCache = $tableoptions['SEQUENCE_CACHE'];}

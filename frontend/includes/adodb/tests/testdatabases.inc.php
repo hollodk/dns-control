@@ -1,7 +1,7 @@
 <?php
   
 /*
-V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.80 8 Mar 2006  (c) 2000-2008 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -29,6 +29,9 @@ V4.61 24 Feb 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights rese
 <input type=checkbox name="testpdomysql" value=1 <?php echo !empty($testpdomysql) ? 'checked' : '' ?>> <b>MySQL PDO</b><br>
 <input type=checkbox name="testpdosqlite" value=1 <?php echo !empty($testpdosqlite) ? 'checked' : '' ?>> <b>SQLite PDO</b><br>
 <input type=checkbox name="testpdoaccess" value=1 <?php echo !empty($testpdoaccess) ? 'checked' : '' ?>> <b>Access PDO</b><br>
+<input type=checkbox name="testpdomssql" value=1 <?php echo !empty($testpdomssql) ? 'checked' : '' ?>> <b>MSSQL PDO</b><br>
+
+<input type=checkbox name="testpdoora" value=1 <?php echo !empty($testpdoora) ? 'checked' : '' ?>> <b>OCI PDO</b><br>
 
 <td><input type=checkbox name="testdb2" value=1 <?php echo !empty($testdb2) ? 'checked' : '' ?>> DB2<br>
 <input type=checkbox name="testvfp" value=1 <?php echo !empty($testvfp) ? 'checked' : '' ?>> VFP+ODBTP<br>
@@ -101,15 +104,16 @@ if (!empty($testsqlite)) {
 	$path =urlencode('d:\inetpub\adodb\sqlite.db');
 	$dsn = "sqlite://$path/";
 	$db = ADONewConnection($dsn);
-	echo $dsn;
+	//echo $dsn;
 	
-//	$db = &ADONewConnection('sqlite');
-	print "<h1>Connecting $db->databaseType...</h1>";
+	//$db = &ADONewConnection('sqlite');
 	
-	if (1)
-	//if ($db->PConnect("d:\\inetpub\\adodb\\sqlite.db", "", "", ""))
+
+	if ($db && $db->PConnect("d:\\inetpub\\adodb\\sqlite.db", "", "", "")) {
+		print "<h1>Connecting $db->databaseType...</h1>";
 		testdb($db,"create table ADOXYZ (id int, firstname char(24), lastname char(24),created datetime)");
-	else print "ERROR: SQLite";
+	} else 
+		print "ERROR: SQLite";
 	
 }
 
@@ -117,7 +121,6 @@ if (!empty($testpdopgsql)) {
 	$connstr = "pgsql:dbname=test";
 	$u = 'tester';$p='test';
 	$db = &ADONewConnection('pdo');
-	$db->hasTransactions = false;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	$db->Connect($connstr,$u,$p) || die("CONNECT FAILED");
 	testdb($db,
@@ -128,9 +131,20 @@ if (!empty($testpdomysql)) {
 	$connstr = "mysql:dbname=northwind";
 	$u = 'root';$p='';
 	$db = &ADONewConnection('pdo');
-	$db->hasTransactions = false;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	$db->Connect($connstr,$u,$p) || die("CONNECT FAILED");
+	
+	testdb($db,
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)");
+}
+
+if (!empty($testpdomssql)) {
+	$connstr = "mssql:dbname=northwind";
+	$u = 'sa';$p='natsoft';
+	$db = &ADONewConnection('pdo');
+	print "<h1>Connecting $db->databaseType...</h1>";
+	$db->Connect($connstr,$u,$p) || die("CONNECT FAILED");
+	
 	testdb($db,
 		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)");
 }
@@ -151,6 +165,17 @@ if (!empty($testpdoaccess)) {
 	$u = '';$p='';
 	$db = &ADONewConnection('pdo');
 	$db->hasTransactions = false;
+	print "<h1>Connecting $db->databaseType...</h1>";
+	$db->Connect($connstr,$u,$p) || die("CONNECT FAILED");
+	testdb($db,
+		"create table ADOXYZ (id int, firstname char(24), lastname char(24), created date)");
+}
+
+if (!empty($testpdoora)) {
+	$connstr = 'oci:';
+	$u = 'scott';$p='natsoft';
+	$db = &ADONewConnection('pdo');
+	#$db->hasTransactions = false;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	$db->Connect($connstr,$u,$p) || die("CONNECT FAILED");
 	testdb($db,
@@ -197,7 +222,7 @@ if (!empty($testvfp)) { // ODBC
 		testdb($db,"create table d:\\inetpub\\adodb\\ADOXYZ (id int, firstname char(24), lastname char(24),created date)");
 	 } else print "ERROR: Visual FoxPro test requires a Windows ODBC DSN=vfp-adoxyz, VFP driver";
 	
-	echo "<hr>";
+	echo "<hr />";
 	$db = &ADONewConnection('odbtp');
 	
 	if ( $db->PConnect('localhost','DRIVER={Microsoft Visual FoxPro Driver};SOURCETYPE=DBF;SOURCEDB=d:\inetpub\adodb;EXCLUSIVE=NO;')) {
@@ -231,7 +256,7 @@ if (!empty($testmysqli)) { // MYSQL
 
 	$db = &ADONewConnection('mysqli');
 	print "<h1>Connecting $db->databaseType...</h1>";
-	if (PHP_VERSION >= 5 || $HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
+	if (PHP_VERSION >= 5 || $_SERVER['HTTP_HOST'] == 'localhost') $server = 'localhost';
 	else $server = "mangrove";
 	if ($db->PConnect($server, "root", "", "northwind")) {
 		//$db->debug=1;$db->Execute('drop table ADOXYZ');
@@ -247,7 +272,7 @@ if (!empty($testmysqlodbc)) { // MYSQL
 	$db = &ADONewConnection('odbc');
 	$db->hasTransactions = false;
 	print "<h1>Connecting $db->databaseType...</h1>";
-	if ($HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
+	if ($_SERVER['HTTP_HOST'] == 'localhost') $server = 'localhost';
 	else $server = "mangrove";
 	if ($db->PConnect('mysql', "root", ""))
 		testdb($db,
@@ -258,7 +283,7 @@ if (!empty($testmysqlodbc)) { // MYSQL
 if (!empty($testproxy)){
 	$db = &ADONewConnection('proxy');
 	print "<h1>Connecting $db->databaseType...</h1>";
-	if ($HTTP_SERVER_VARS['HTTP_HOST'] == 'localhost') $server = 'localhost';
+	if ($_SERVER['HTTP_HOST'] == 'localhost') $server = 'localhost';
 
 	if ($db->PConnect('http://localhost/php/phplens/adodb/server.php'))
 		testdb($db,
@@ -269,13 +294,17 @@ if (!empty($testproxy)){
 
 ADOLoadCode('oci805');
 ADOLoadCode("oci8po");
+	
 if (!empty($testoracle)) {
-	$dsn = "oci8po://scott:natsoft@sherkhan?persist";
-	$db = ADONewConnection($dsn);
+	$dsn = "oci8po://juris10:natsoft@sherkhan?persist";
+	$db = ADONewConnection($dsn );//'oci8');
+	
+	//$db->debug=1;
 	print "<h1>Connecting $db->databaseType...</h1>";
 	if (true || $db->Connect('', "scott", "natsoft",''))
 		testdb($db,"create table ADOXYZ (id int, firstname varchar(24), lastname varchar(24),created date)");
-	else print "ERROR: Oracle test requires an Oracle server setup with scott/natsoft".'<BR>'.$db->ErrorMsg();
+	else 
+		print "ERROR: Oracle test requires an Oracle server setup with scott/natsoft".'<BR>'.$db->ErrorMsg();
 
 }
 ADOLoadCode("oracle"); // no longer supported
@@ -289,18 +318,29 @@ if (false && !empty($testoracle)) {
 
 }
 
-ADOLoadCode("db2"); // no longer supported
-if (!empty($testdb2)) { 
-	$db = ADONewConnection();
-	print "<h1>Connecting $db->databaseType...</h1>";
-	
-	$dsn = "db2_sample";
-	$dsn = "driver={IBM db2 odbc DRIVER};Database=sample;hostname=localhost;port=50000;protocol=TCPIP; uid=root; pwd=natsoft";
-	if ($db->Connect($dsn)) {
-	//	testdb($db,"create table ADOXYZ (id int, firstname varchar(24), lastname varchar(24),created date)");
-	} else print "ERROR: DB2 test requires an server setup with odbc data source db2_sample".'<BR>'.$db->ErrorMsg();
-
-echo "<hr>";
+ADOLoadCode("odbc_db2"); // no longer supported
+if (!empty($testdb2)) {
+	if (PHP_VERSION>=5.1) {
+		$db = ADONewConnection("db2");
+		print "<h1>Connecting $db->databaseType...</h1>";
+		
+		#$db->curMode = SQL_CUR_USE_ODBC;
+		#$dsn = "driver={IBM db2 odbc DRIVER};Database=test;hostname=localhost;port=50000;protocol=TCPIP; uid=natsoft; pwd=guest";
+		if ($db->Connect('localhost','natsoft','guest','test')) {
+			testdb($db,"create table ADOXYZ (id int, firstname varchar(24), lastname varchar(24),created date)");
+		} else print "ERROR: DB2 test requires an server setup with odbc data source db2_sample".'<BR>'.$db->ErrorMsg();
+	} else { 
+		$db = ADONewConnection("odbc_db2");
+		print "<h1>Connecting $db->databaseType...</h1>";
+		
+		$dsn = "db2test";
+		#$db->curMode = SQL_CUR_USE_ODBC;
+		#$dsn = "driver={IBM db2 odbc DRIVER};Database=test;hostname=localhost;port=50000;protocol=TCPIP; uid=natsoft; pwd=guest";
+		if ($db->Connect($dsn)) {
+			testdb($db,"create table ADOXYZ (id int, firstname varchar(24), lastname varchar(24),created date)");
+		} else print "ERROR: DB2 test requires an server setup with odbc data source db2_sample".'<BR>'.$db->ErrorMsg();
+	}
+echo "<hr />";
 flush();
 	$dsn = "driver={IBM db2 odbc DRIVER};Database=sample;hostname=localhost;port=50000;protocol=TCPIP; uid=root; pwd=natsoft";
 	
@@ -318,6 +358,25 @@ flush();
 
 
 $server = 'sherkhan';
+
+
+
+ADOLoadCode("mssqlpo");
+if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
+	$db = ADONewConnection("mssqlpo");
+	//$db->debug=1;
+	print "<h1>Connecting $db->databaseType...</h1>";
+	
+	#$ok = $db->Connect('','adodb','natsoft','northwind');
+
+	if ($db->PConnect("mangrove", "sa", "natsoft", "Northwind")) {
+		AutoDetect_MSSQL_Date_Order($db);
+	//	$db->Execute('drop table adoxyz');
+		testdb($db,"create table ADOXYZ (id int, firstname char(24) null, lastname char(24) null,created datetime null)");
+	} else print "ERROR: MSSQL test 2 requires a MS SQL 7 on a server='192.168.0.1', userid='adodb', password='natsoft', database='ai'".'<BR>'.$db->ErrorMsg();
+	
+}
+
 
 ADOLoadCode('odbc_mssql');
 if (!empty($testmssql)) { // MS SQL Server via ODBC
@@ -342,29 +401,12 @@ if (!empty($testmssql) && !empty($testado) ) { // ADO ACCESS MSSQL -- thru ODBC 
 	print "<h1>Connecting DSN-less $db->databaseType...</h1>";
 	
 	$myDSN="PROVIDER=MSDASQL;DRIVER={SQL Server};"
-		. "SERVER=$server;DATABASE=NorthWind;UID=adodb;PWD=natsoft;Trusted_Connection=No"  ;
+		. "SERVER=$server;DATABASE=NorthWind;UID=adodb;PWD=natsoft;Trusted_Connection=No";
 
 		
 	if ($db->PConnect($myDSN, "", "", ""))
 		testdb($db,"create table ADOXYZ (id int, firstname char(24) null, lastname char(24) null,created datetime null)");
 	else print "ERROR: MSSQL test 2 requires MS SQL 7";
-	
-}
-
-
-ADOLoadCode("mssqlpo");
-if (!empty($testmssql)) { // MS SQL Server -- the extension is buggy -- probably better to use ODBC
-	$db = ADONewConnection("mssqlpo");
-	//$db->debug=1;
-	print "<h1>Connecting $db->databaseType...</h1>";
-	
-	$ok = $db->Connect('','adodb','natsoft','northwind');
-
-	if ($ok or $db->PConnect("mangrove", "sa", "natsoft", "ai")) {
-		AutoDetect_MSSQL_Date_Order($db);
-	//	$db->Execute('drop table adoxyz');
-		testdb($db,"create table ADOXYZ (id int, firstname char(24) null, lastname char(24) null,created datetime null)");
-	} else print "ERROR: MSSQL test 2 requires a MS SQL 7 on a server='192.168.0.1', userid='adodb', password='natsoft', database='ai'".'<BR>'.$db->ErrorMsg();
 	
 }
 
