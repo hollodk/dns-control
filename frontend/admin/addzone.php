@@ -1,5 +1,4 @@
 <?php
-/* $Id: addrecord.php 29 2005-02-28 21:47:53Z justin $ */
 include("../includes/globals.php");
 $session->isAdmin();
 if(isset($_POST['act']) == 'add') {
@@ -16,6 +15,5 @@ else {
     $tpl->assign('dns1', $dns1);
     $tpl->assign('dns2', $dns2);
     $tpl->display("admin/addzone.htm");
-}	
-
+}
 ?>
