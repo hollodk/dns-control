@@ -1,6 +1,6 @@
 <?php
-/* $Id: globals.php 61 2005-02-26 19:43:12Z justin $ */
-require("/www/dev.dns/dns-control/frontend/includes/config.inc.php");
+// Add path to config.inc.php in frontend includes directory
+require("");
 
 
 $tpl_path = $base_path . "/includes/templates";
