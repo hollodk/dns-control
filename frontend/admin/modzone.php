@@ -15,11 +15,14 @@ if(!empty($_REQUEST['domainid'])) {
             $info = $dns->zoneInfo($_GET['domainid']);
             $tpl->assign('password', $info['password']);
             $tpl->assign('domain', $info['domain']);
+            $tpl->assign('ns1', $info['ns1']);
+            $tpl->assign('ns2', $info['ns2']);
+            $tpl->assign('description', $info['description']);
             $tpl->display('admin/editzone.htm');
         break;
         case 'update':
-            $dns->updateZonePass($_POST['domainid'], $_POST['password']);
-            $message = "Password updated\n";
+            $dns->updateZone($_POST['domainid'], $_POST['password'],$_POST['ns1'],$_POST['ns2'],$_POST['desc']);
+            $message = "Domain information updated\n";
             header("Location: index.php?msg=" . urlencode($message));
         break;
         default:

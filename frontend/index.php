@@ -6,7 +6,7 @@ $domain = $_SESSION['valid_user'];
 $a = $dns->getRecords($domain, "a");
 $cname = $dns->getRecords($domain, "cname");
 $mx = $dns->getRecords($domain, "mx");
-if($_GET['failed'] == "1") {
+if(isset($_GET['failed']) == "1") {
     $color = 'red';
 }
 else {
@@ -14,7 +14,7 @@ else {
 }
 $tpl->assign('domain', $domain);
 $tpl->assign('color', $color);
-$tpl->assign('msg', $_GET['msg']);
+if(isset($_GET['msg'])) { $tpl->assign('msg', $_GET['msg']); }
 $tpl->assign('ip', $dns->zoneIp($domain));
 $tpl->assign('records_a', $a);
 $tpl->assign('records_cname', $cname);

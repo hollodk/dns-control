@@ -4,6 +4,30 @@
 <title><{$app_name}></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="<{$base_url}>/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="<{$base_url}>/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+
+$('input[type=submit]').css("backgroundColor","#B7B7B7");
+$('input[type=submit]').css("color","#B7B7B7");
+
+  jQuery.fn.checkAll = function() {
+        $('input[type=text], input[type=password], textarea').each(function(index, element) {
+              if ($(this).val() == '') {
+                    $('input[type=submit]').attr("disabled","disabled");
+                    $('input[type=submit]').css("backgroundColor","#B7B7B7");
+                    $('input[type=submit]').css("color","#B7B7B7");
+                    return false;
+              } else {
+                    $('input[type=submit]').removeAttr('disabled');
+                    $('input[type=submit]').css("backgroundColor","#F2F9FD");
+                    $('input[type=submit]').css("color","#2D617D");
+              }
+        });
+  }
+  $('input[type=text],input[type=password], textarea').bind('mouseenter mouseleave focus blur keypress', function() { $(this).checkAll(); });
+});
+</script>
 </head>
 <body>
 <table width="80%" border="0" cellpadding="2" cellspacing="1" onmouseover="this.style.backgroundColor = '#BCCBD2';" onmouseout="this.style.backgroundColor = '#CDDBE2';" class="mainBG" align="center">
@@ -12,9 +36,7 @@
 </td>
   </tr>
   <tr> 
-    <td onmouseover="this.style.backgroundColor = '#FBFDFF';"
-onmouseout="this.style.backgroundColor = '#FFFFFF';"
-class="contentBGNewsMainTD"> <br>
+    <td onmouseover="this.style.backgroundColor = '#FBFDFF';" onmouseout="this.style.backgroundColor = '#FFFFFF';" class="contentBGNewsMainTD"> <br />
 			<table width="50%" border="0" cellspacing="1" cellpadding="2" bgcolor="#dcdcdc" align="center" >
               <tr>
                 <td bgcolor="whitesmoke" colspan="2"><p><b>
@@ -35,7 +57,29 @@ class="contentBGNewsMainTD"> <br>
                           </tr>
                           <tr>
                             <td bgcolor="whitesmoke"><{$domain}></td>
-                            <td><input name="password" value="<{$password}>"></td>
+                            <td><input type='text' name="password" value="<{$password}>"></td>
+                          </tr>
+                          <tr>
+                            <td colspan='2'>&nbsp;</td>
+                          </tr>
+                          <tr>
+                            <td>Primary DNS server</td>
+                            <td><input name="ns1" type="text" size="15" value="<{$ns1}>"/></td>
+                          </tr>
+                          <tr>
+                            <td>Secondary DNS server</td>
+                            <td><input name="ns2" type="text" size="15" value="<{$ns2}>"/></td>
+                          </tr>
+                          <tr>
+                            <td colspan='2'>&nbsp;</td>
+                          </tr>
+                          <tr>
+                            <td>Domain Description</td>
+                            <td><textarea rows='5' cols='60' name='desc'><{$description}></textarea></td>
+                          </tr>
+                          <tr>
+                          <tr>
+                            <td colspan='2'>&nbsp;</td>
                           </tr>
                           <tr>
                             <td>&nbsp;</td>

@@ -262,3 +262,23 @@ INPUT.post, TEXTAREA.post, SELECT {
 	text-align: center;
 	vertical-align: middle;
 }
+.cursor {
+  cursor:pointer;
+}
+.login_btn {
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  text-decoration:underline;
+}
+.login_btn:hover {
+  text-decoration:none;
+}
+.login_form {
+  padding:0xp;
+  margin:0px;
+}
+.domainlist td {
+  padding-top:5px;
+  padding-bottom:5px;
+}

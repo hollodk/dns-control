@@ -9,10 +9,10 @@ if(!empty($_POST['username']) && !empty($_POST['password'])) {
     $session->authAdmin($_POST['username'], $_POST['password']);
 }
 else{
-    if($_GET['failed']) {
+    if(isset($_GET['failed'])) {
         print "<center><font color=\"red\"><b>The information you entered is incorrect</b></font>";
     }
-    if($_GET['msg']) {
+    if(isset($_GET['msg'])) {
         print "<center><b><font color=\"red\">$msg</b></font>";
     }
     $tpl->display("admin/login.htm");

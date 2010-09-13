@@ -1,6 +1,6 @@
 <?php
 /* $Id: globals.php 61 2005-02-26 19:43:12Z justin $ */
-require("/var/www/html/includes/config.inc.php");
+require("/www/dev.dns/dns-control/frontend/includes/config.inc.php");
 
 
 $tpl_path = $base_path . "/includes/templates";

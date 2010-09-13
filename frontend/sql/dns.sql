@@ -21,6 +21,9 @@ CREATE TABLE add_queue (
   domain varchar(150) NOT NULL default '',
   address varchar(15) NOT NULL default '0',
   `password` varchar(150) NOT NULL default '',
+  ns1 varchar(150) NOT NULL default '',
+  ns2 varchar(150) NOT NULL default '',
+  description text NOT NULL default '',
   completed tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (queueid),
   KEY domain (domain,address),
@@ -67,6 +70,9 @@ CREATE TABLE domains (
   domain varchar(150) NOT NULL default '',
   address varchar(15) NOT NULL default '',
   `password` varchar(50) NOT NULL default '',
+  ns1 varchar(150) NOT NULL default '',
+  ns2 varchar(150) NOT NULL default '',
+  description text NOT NULL default '',
   PRIMARY KEY  (domainid),
   KEY domain (domain,`password`)
 ) TYPE=MyISAM;

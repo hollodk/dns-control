@@ -3,7 +3,7 @@
 include("../includes/globals.php");
 $session->isAdmin();
 
-if($_GET['act'] == 'runqueue') {
+if(isset($_GET['act']) == 'runqueue') {
     exit;
     if(!$dns->createLock("DNS")) {
         $message = $dns->error;
@@ -30,20 +30,20 @@ else {
         $start = "0";
     }
 }
-if($_GET['failed'] == "1") {
+if(isset($_GET['failed']) == "1") {
     $color = 'red';
 }
 else {
     $color = 'green';
 }
-$perpage = 25;
-$count = $db->getOne("SELECT count(domainid) FROM domains WHERE domainid != '1' ORDER BY domain");
+$perpage = 50;
+$count = $db->getOne("SELECT count(domainid) FROM domains ORDER BY domain");
 $paging = generate_pagination($_SERVER['PHP_SELF']."?", $count, $perpage, $start);
-$domains = $db->getAll("SELECT domainid, domain, password FROM domains WHERE domainid != '1' ORDER BY domain  LIMIT $start, $perpage");
+$domains = $db->getAll("SELECT domainid, domain, password FROM domains ORDER BY domain  LIMIT $start, $perpage");
 $tpl->assign('color', $color);
 $tpl->assign('paging', $paging);
 $tpl->assign('totaldomains', $count);
-$tpl->assign('msg', $_GET['msg']);
+if(isset($_GET['msg'])) { $tpl->assign('msg', $_GET['msg']); }
 $tpl->assign('domains', $domains);
 $tpl->display('admin/index.htm');
 ?>

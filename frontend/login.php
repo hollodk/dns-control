@@ -9,10 +9,10 @@ if(!empty($_POST['domain']) && !empty($_POST['password'])) {
     $session->auth($_POST['domain'], $_POST['password']);
 }
 else{
-    if($_GET['failed']) {
+    if(isset($_GET['failed'])) {
         print "<center><font color=\"red\"><b>The information you entered is incorrect</b></font>";
     }
-    if($_GET['msg']) {
+    if(isset($_GET['msg'])) {
         print "<center><b><font color=\"red\">$msg</b></font>";
     }
     $tpl->display("login.htm");

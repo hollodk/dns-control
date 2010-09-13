@@ -18,14 +18,14 @@ class DNS {
         $this->loadTpl();
     }
 
-    function addZone($domain, $address, $password) {
+    function addZone($domain, $address, $password, $ns1, $ns2, $desc) {
         if($this->isDomain($domain) && $this->isIP($address)) {
             if($this->isZone($domain)) {
                 $this->raiseError("Domain exists or is in the queue to be created\n");
                 return false;
             }
-            $sql = sprintf("INSERT INTO add_queue (domain, address, password) VALUES (%s, %s, %s)",
-                            $this->db->quote($domain), $this->db->quote($address),  $this->db->quote($password));
+            $sql = sprintf("INSERT INTO add_queue (domain, address, password, ns1, ns2, description) VALUES (%s, %s, %s, %s, %s, %s)",
+                            $this->db->quote($domain), $this->db->quote($address),  $this->db->quote($password),  $this->db->quote($ns1),  $this->db->quote($ns2),  $this->db->quote($desc));
             $this->db->Execute($sql);
             return true;
         }
@@ -39,7 +39,7 @@ class DNS {
         $sprocess = $this->db->quote($process);
         $now = time();
         $result = $this->db->getRow("SELECT lockid, timestamp FROM locks WHERE process = $sprocess AND timestamp > $now");
-        if($result['lockid']) {
+        if(isset($result['lockid'])) {
             return true;
         }
         else {
@@ -99,12 +99,12 @@ class DNS {
 
     function writeConf() {
         $query = $this->db->Execute("SELECT distinct(domain) FROM domains ORDER BY domain");
-	$this->entries = $this->tpl['named.conf'];
+	      $this->entries = $this->tpl['named.conf'];
         while($row = $query->fetchRow()) {
             $domain = $row['domain'];
             $letter = substr($domain, 0, 1);
             $this->entries .= "zone \"$domain\" {\n    type master;\n    file \"$letter/$domain\";\n};\n\n";
-            $domains .= " $domain ";
+            //isset($domains) .= " isset($domain) ";
         }
 
         $f = fopen($this->conf_file, "w");
@@ -173,7 +173,7 @@ class DNS {
             }
         }
 
-        $zone .= $records_mx . $records_a . $records_cname;
+        $zone .= isset($records_mx) . isset($records_a) . isset($records_cname);
 
         if($return) {
             return $zone;
@@ -186,7 +186,7 @@ class DNS {
     }
 
     function processAddqueue() {
-        $query = $this->db->Execute("SELECT queueid, domain, address, password FROM add_queue WHERE completed = '0' ORDER BY domain");
+        $query = $this->db->Execute("SELECT queueid, domain, address, password, ns1, ns2, description FROM add_queue WHERE completed = '0' ORDER BY domain");
         if($query->numRows() > 0 ) {
             while($row = $query->fetchRow()) {
                 $mx = $this->db->quote('mail.' . $row['domain'] . '.');
@@ -194,12 +194,15 @@ class DNS {
                 $domain = $this->db->quote($row['domain']);
                 $address = $this->db->quote($row['address']);
                 $password = $this->db->quote($row['password']);
-                $this->db->Execute("INSERT INTO domains (domain, address, password) VALUES ($domain, $address, $password)");
+                $ns1 = $this->db->quote($row['ns1']);
+                $ns2 = $this->db->quote($row['ns2']);
+                $description = $this->db->quote($row['description']);
+                $this->db->Execute("INSERT INTO domains (domain, address, password, ns1, ns2, description) VALUES ($domain, $address, $password, $ns1, $ns2, $description)");
                 $domainid = $this->db->quote($this->domainId($row['domain']));
-                $this->db->Execute("INSERT INTO records_a (domainid, name, address) VALUES ($domainid, 'mail', $address)");
-                $this->db->Execute("INSERT INTO records_a (domainid, name, address) VALUES ($domainid, '*', $address)");
+                //$this->db->Execute("INSERT INTO records_a (domainid, name, address) VALUES ($domainid, 'mail', $address)");
+                //$this->db->Execute("INSERT INTO records_a (domainid, name, address) VALUES ($domainid, '*', $address)");
                 $this->db->Execute("INSERT INTO records_a (domainid, name, address) VALUES ($domainid, 'www', $address)");
-                $this->db->Execute("INSERT INTO records_mx (domainid, priority, address) VALUES ($domainid, '10', $mx)");
+                //$this->db->Execute("INSERT INTO records_mx (domainid, priority, address) VALUES ($domainid, '10', $mx)");
                 $this->writeZone($row['domain']);
                 $this->db->Execute("UPDATE add_queue SET completed = '1' WHERE queueid = $queueid");
                 $this->writeConf();
@@ -270,14 +273,17 @@ class DNS {
 
     function zoneInfo($domainid) {
         $domainid = $this->db->quote($domainid);
-        $info = $this->db->getRow("SELECT domain, password, address FROM domains WHERE domainid = $domainid");
+        $info = $this->db->getRow("SELECT domain, password, address, ns1, ns2, description FROM domains WHERE domainid = $domainid");
         return $info;
     }
 
-    function updateZonePass($domainid, $password) {
+    function updateZone($domainid, $password, $ns1, $ns2, $desc) {
         $domainid = $this->db->quote($domainid);
         $password = $this->db->quote($password);
-        $this->db->Execute("UPDATE domains SET password = $password WHERE domainid = $domainid");
+        $ns1 = $this->db->quote($ns1);
+        $ns2 = $this->db->quote($ns2);
+        $desc = $this->db->quote($desc);
+        $this->db->Execute("UPDATE domains SET password = $password, ns1 = $ns1, ns2 = $ns2, description = $desc WHERE domainid = $domainid");
         return true;
     }
 
