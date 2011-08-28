@@ -41,12 +41,7 @@ class="contentBGNewsMainTD"> <br>
                 <td><{$domains[info].password}></td>
                 <td><a href="modzone.php?act=edit&domainid=<{$domains[info].domainid}>">Edit</a></td>
                 <td><a href="modzone.php?act=del&domainid=<{$domains[info].domainid}>" onClick="return delrecord('<{$domains[info].domain}>')">Delete</a></td>
-                  <td width='50'>
-                    <form class='login_form' method='post' action='<{$base_url}>/login.php'>
-                      <input type="hidden" name='domain' value="<{$domains[info].domain}>" />
-                      <input type="hidden" name='password' value="<{$domains[info].password}>" />
-                      <input class='login_btn' type='submit' name='submit' value="Login" />
-                    </form></td>
+                <td><a href="su.php?domainid=<{$domains[info].domainid}>">SU</a></td>
               </tr>
             <{/section}>
             <tr><td><br></td></tr>
