@@ -2,8 +2,8 @@
 <?php
 require(dirname(__FILE__).'/includes/globals.php');
 
-if($argc == 4) {
-    if(!$dns->addZone($argv[1], $argv[2], $argv[3])) {
+if($argc == 5) {
+    if(!$dns->addZone($argv[1], $argv[2], $argv[3], $dns1, $dns2, $argv[4])) {
         print $dns->error . "\n";
     }
     else {
@@ -11,7 +11,7 @@ if($argc == 4) {
     }
 }
 else {
-    print "Usage: $argv[0] <zone> <ip> <password>\n";
+    print "Usage: $argv[0] <zone> <ip> <password> <description>\n";
 }
 
 ?>
