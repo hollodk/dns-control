@@ -7,7 +7,7 @@
 </head>
 <body>
 <SCRIPT LANGUAGE="JavaScript">
-<!-- Start confirm del 
+<!-- Start confirm del
 
 function delrecord(recordname) {
         return confirm("Are you sure you want to delete " + recordname + "?" );
@@ -16,11 +16,11 @@ function delrecord(recordname) {
 // Stop confirm del --->
 </SCRIPT>
 <table width="80%" border="0" cellpadding="2" cellspacing="1" onmouseover="this.style.backgroundColor = '#BCCBD2';" onmouseout="this.style.backgroundColor = '#CDDBE2';" class="mainBG" align="center">
-  <tr> 
+  <tr>
     <td align="center" valign="middle" class="headBG1"><span class="textSize0"><{include file="admin/nav.htm"}><br></span>
 </td>
   </tr>
-  <tr> 
+  <tr>
     <td onmouseover="this.style.backgroundColor = '#FBFDFF';"
 onmouseout="this.style.backgroundColor = '#FFFFFF';"
 class="contentBGNewsMainTD"> <br>
@@ -31,7 +31,7 @@ class="contentBGNewsMainTD"> <br>
             Viewing Domains: <{$totaldomains}>
           </center></b></p></td>
         </tr>
-        <tr> 
+        <tr>
           <td bgcolor="#ffffff" colspan="2"><center>
             <table width="100%"  border="0" cellspacing="0" cellpadding="0">
             <tr><td><br></td></tr>
@@ -41,6 +41,12 @@ class="contentBGNewsMainTD"> <br>
                 <td><{$domains[info].password}></td>
                 <td><a href="modzone.php?act=edit&domainid=<{$domains[info].domainid}>">Edit</a></td>
                 <td><a href="modzone.php?act=del&domainid=<{$domains[info].domainid}>" onClick="return delrecord('<{$domains[info].domain}>')">Delete</a></td>
+                  <td width='50'>
+                    <form class='login_form' method='post' action='<{$base_url}>/login.php'>
+                      <input type="hidden" name='domain' value="<{$domains[info].domain}>" />
+                      <input type="hidden" name='password' value="<{$domains[info].password}>" />
+                      <input class='login_btn' type='submit' name='submit' value="Login" />
+                    </form></td>
               </tr>
             <{/section}>
             <tr><td><br></td></tr>
