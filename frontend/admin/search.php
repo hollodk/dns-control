@@ -7,7 +7,7 @@ if(empty($_REQUEST['act']) || !isset($_REQUEST['q'])) {
 }
 else {
     $search_term = "";
-    if($_REQUEST['contains'] == "1") {
+    if(isset($_REQUEST['contains']) && $_REQUEST['contains'] == "1") {
         $search_term = $db->quote('%'.$_REQUEST['q']. '%');
     }
     else {
@@ -27,7 +27,8 @@ else {
     }
     $perpage = 25;
     $count = $db->getOne("SELECT count(domainid) FROM domains WHERE domain like $search_term");
-    $paging = generate_pagination($_SERVER['PHP_SELF']."?act=result&q=".$_REQUEST['q']."&contains=".$_REQUEST['contains'], $count, $perpage, $start);
+    $contains = (isset($_REQUEST['contains'])) ? $_REQUEST['contains'] : '';
+    $paging = generate_pagination($_SERVER['PHP_SELF']."?act=result&q=".$_REQUEST['q']."&contains=".$contains, $count, $perpage, $start);
     $results = $db->getAll("SELECT domainid, domain, password FROM domains WHERE domain like $search_term LIMIT $start, $perpage");
     $tpl->assign("domains", $results);
     $tpl->assign("paging", $paging);
