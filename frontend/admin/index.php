@@ -3,22 +3,6 @@
 include("../includes/globals.php");
 $session->isAdmin();
 
-if(isset($_GET['act']) == 'runqueue') {
-    exit;
-    if(!$dns->createLock("DNS")) {
-        $message = $dns->error;
-        header("Location: index.php?failed=1&msg=" . urlencode($message));
-    }
-    else {
-        $dns->processModqueue();
-        $dns->processAddqueue();
-        $dns->processDelqueue();
-        $message = "Queue has been run\n";
-        $dns->delLock("DNS");
-        header("Location: index.php?msg=" . urlencode($message));
-    }
-}
-
 if(empty($_GET['start'])) {
         $start = "0";
 }
