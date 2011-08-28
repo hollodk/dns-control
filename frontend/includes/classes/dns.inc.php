@@ -47,7 +47,7 @@ class DNS {
             return false;
         }
     }
-        
+
     function createLock($process) {
         if($this->isLock($process)) {
             $this->raiseError("Process Already running\n");
@@ -79,7 +79,7 @@ class DNS {
         return true;
     }
 
-    //private 
+    //private
     function delZone($domain) {
         if($this->isDomain($domain)) {
             $domainid = $this->db->quote($this->domainId($domain));
@@ -142,7 +142,7 @@ class DNS {
         $find    = array("{dns_server_1}", "{dns_server_2}", "{dns_hostmaster}", "{serial}");
         $replace = array($this->dns1, $this->dns2, $this->dnshostmaster, time());
         $zone = str_replace($find, $replace, $this->tpl['zone']);
-        
+
         //mx records
         $query = $this->db->Execute("SELECT address, priority FROM records_mx WHERE domainid = '$domainid'");
         if($query->numRows() > 0) {
@@ -173,7 +173,14 @@ class DNS {
             }
         }
 
-        $zone .= isset($records_mx) . isset($records_a) . isset($records_cname);
+        if (isset($records_mx))
+          $zone .= $records_mx;
+
+        if (isset($records_a))
+          $zone .= $records_a;
+
+        if (isset($records_cname))
+         $zone .= $records_cname;
 
         if($return) {
             return $zone;
@@ -214,7 +221,7 @@ class DNS {
             $this->raiseError("Nothing to process\n");
             return false;
         }
-            
+
     }
 
     function processDelqueue() {
@@ -264,7 +271,7 @@ class DNS {
         $this->tpl['record_mx'] = file_get_contents($this->tpl_path . "/record_mx.tpl");
         $this->tpl['named.conf'] = file_get_contents($this->tpl_path . "/named.conf.tpl");
     }
-    
+
     function domainId($domain) {
         $sql = sprintf("SELECT domainid FROM domains WHERE domain = %s", $this->db->quote($domain));
         $domainid = $this->db->getOne($sql);
