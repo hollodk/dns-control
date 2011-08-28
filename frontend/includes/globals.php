@@ -23,7 +23,7 @@ $tpl->left_delimiter = "<{";
 $tpl->right_delimiter = "}>";
 $tpl->assign('base_url', $base_url);
 $tpl->assign('version', '2.0.2');
-$tpl->assign('app_name', 'RocketControl DNS hollos Fork');
+$tpl->assign('app_name', 'RocketControl DNS');
 
 $db = NewADOConnection('mysql');
 $db->Connect($db_host, $db_user, $db_pass, $db_name);
