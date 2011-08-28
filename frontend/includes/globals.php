@@ -22,8 +22,8 @@ $tpl->cache_dir = $base_path . '/include/cache/';
 $tpl->left_delimiter = "<{";
 $tpl->right_delimiter = "}>";
 $tpl->assign('base_url', $base_url);
-$tpl->assign('version', '2.0.1');
-$tpl->assign('app_name', 'RocketControl DNS Atoms Fork');
+$tpl->assign('version', '2.0.2');
+$tpl->assign('app_name', 'RocketControl DNS hollos Fork');
 
 $db = NewADOConnection('mysql');
 $db->Connect($db_host, $db_user, $db_pass, $db_name);
