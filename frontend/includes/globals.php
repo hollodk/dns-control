@@ -13,7 +13,7 @@ require($base_path . "/includes/functions.inc.php");
 require($base_path . "/includes/adodb/adodb.inc.php");
 require($base_path . "/includes/adodb/adodb-errorhandler.inc.php");
 require($base_path . "/includes/adodb/session/adodb-session.php");
-require($base_path . "/includes/smarty/Smarty.class.php");
+require($base_path . "/includes/Smarty-3.0.8/libs/Smarty.class.php");
 
 $tpl = new Smarty;
 $tpl->template_dir = $base_path . '/templates/';
