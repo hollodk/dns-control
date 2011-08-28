@@ -2,9 +2,9 @@
 /* $Id: session.inc.php 27 2005-02-20 15:32:52Z root $ */
 
 class Session {
- 
-    var $db = "";   
-    var $tpl = "";   
+
+    var $db = "";
+    var $tpl = "";
     var $username = "";
     var $userid = "";
     var $password = "";
@@ -19,12 +19,12 @@ class Session {
     function auth($username, $password) {
         $this->username = trim($username);
         $this->password = trim($password);
-   
+
         if(!empty($_SESSION['valid_user'])) {
             return true;
-        } 
+        }
         else {
-            $sql = sprintf("SELECT domainid FROM domains WHERE domain = %s AND password = %s", 
+            $sql = sprintf("SELECT domainid FROM domains WHERE domain = %s AND password = %s",
                            $this->db->quote($this->username), $this->db->quote($this->password));
             $this->userid = $this->db->getOne($sql);
             if(!empty($this->userid)) {
@@ -32,7 +32,7 @@ class Session {
                 $_SESSION['valid_user'] = $this->username;
                 $_SESSION['domainid'] = $this->userid;
                 if(!empty($_SESSION['redirect'])) {
-                    header("Location: ".$_SESSION['redirect']); 
+                    header("Location: ".$_SESSION['redirect']);
                 }
                 else {
                     header("Location: index.php");
@@ -50,12 +50,12 @@ class Session {
     function authAdmin($username, $password) {
         $this->username = trim($username);
         $this->password = trim($password);
-  
+
         if(!empty($_SESSION['valid_admin'])) {
             return true;
-        } 
+        }
         else {
-            $sql = sprintf("SELECT userid FROM admins WHERE username = %s AND password = md5(%s)", 
+            $sql = sprintf("SELECT userid FROM admins WHERE username = %s AND password = md5(%s)",
                            $this->db->quote($this->username), $this->db->quote($this->password));
             $this->userid = $this->db->getOne($sql);
             if(!empty($this->userid)) {
@@ -63,7 +63,7 @@ class Session {
                 $_SESSION['valid_admin'] = $this->username;
                 $_SESSION['userid'] = $this->userid;
                 if(!empty($_SESSION['redirect'])) {
-                    header("Location: ".$_SESSION['redirect']); 
+                    header("Location: ".$_SESSION['redirect']);
                 }
                 else {
                     header("Location: index.php");
@@ -85,7 +85,7 @@ class Session {
     function isAuth() {
         if(!empty($_SESSION['valid_user'])) {
             return true;
-        } 
+        }
         else {
             $this->login();
         }
@@ -94,7 +94,7 @@ class Session {
     function isAdmin() {
         if(!empty($_SESSION['valid_admin'])) {
             return true;
-        } 
+        }
         else {
             $this->adminlogin();
         }
@@ -107,6 +107,7 @@ class Session {
         }
         else {
             header("Location: login.php");
+            die();
         }
     }
 
@@ -136,7 +137,7 @@ class Session {
         $_SESSION = array();
         if (isset($_COOKIE[session_name()])) {
             setcookie(session_name(), '', time()-42000, '/');
-        } 
+        }
         $destroy = session_destroy();
         if($destroy) {
             header("Location: login.php?logout=1");
