@@ -34,7 +34,7 @@ function delrecord(recordname) {
     <td onmouseover="this.style.backgroundColor = '#FBFDFF';" onmouseout="this.style.backgroundColor = '#FFFFFF';" class="contentBGNewsMainTD"> <br>
         <{include file="admin/nav_search.htm"}>
       <table width="50%" border="0" cellspacing="1" cellpadding="2" bgcolor="#dcdcdc" align="center" >
-        <tr> <{if $smarty.request.msg}><center><font color="<{$color}>"><b><{$msg}></b></font></center><br><{/if}>
+        <tr><center><font color="<{$color}>"><b><{$smarty.request.msg|default}></b></font></center><br>
           <td bgcolor="whitesmoke" colspan="2"><div align="center"><strong>Domains: <{$totaldomains}></strong></div></td>
         </tr>
         <tr>

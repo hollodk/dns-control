@@ -36,8 +36,8 @@ onmouseout="this.style.backgroundColor = '#FFFFFF';"
 class="contentBGNewsMainTD"> <br>
         <{include file="admin/nav_search.htm"}>
       <table width="50%" border="0" cellspacing="1" cellpadding="2" bgcolor="#dcdcdc" align="center" >
-        <tr> <{if $smarty.request.msg}><center><font color="<{$color}>"><b><{$msg}></b></font></center><br><{/if}>
-          <td bgcolor="whitesmoke" colspan="2"><div align="center"><strong>Viewing Domains: <{$totaldomains}></strong></div></td>
+        <tr><center><font color="<{$color}>"><b><{$smarty.request.msg|default}></b></font></center><br>
+          <td bgcolor="whitesmoke" colspan="2"><div align="center"><strong>Viewing Domains:</strong></div></td>
         </tr>
         <tr>
           <td bgcolor="#ffffff" colspan="2"><center>

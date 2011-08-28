@@ -43,7 +43,7 @@
             <br>
             <form action="search.php" method="get">
             <input name="act" value="results" type="hidden">
-            Quick Search: <input name="q" size=10 value="<{$smarty.request.q}>">
+            Quick Search: <input name="q" size=10 value="<{$smarty.request.q|default}>">
             </form>
             </center>
             </td>
