@@ -46,7 +46,7 @@ function delrecord(recordname) {
               <{section name=info loop=$domains}>
                 <tr class='domainlist' bgcolor="<{cycle name=info values="whitesmoke,#ffffff"}>">
                   <td><{$domains[info].domain}></td>
-                  <td onclick=show_p('<{$domains[info].password}>','<{$domains[info].domainid}>');><span class='cursor' id='pass_<{$domains[info].domainid}>' >Show Password</span></td>
+                  <td width="150" onclick=show_p('<{$domains[info].password}>','<{$domains[info].domainid}>');><span class='cursor' id='pass_<{$domains[info].domainid}>' >Show Password</span></td>
                   <td width='50'><a href="modzone.php?act=edit&domainid=<{$domains[info].domainid}>">Edit</a></td>
                   <td width='50'><a href="modzone.php?act=del&domainid=<{$domains[info].domainid}>" onClick="return delrecord('<{$domains[info].domain}>')">Delete</a></td>
                   <td width='50'><a href="su.php?domainid=<{$domains[info].domainid}>">SU</a></td>
